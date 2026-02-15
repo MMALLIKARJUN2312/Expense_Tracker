@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectDatabase from './config/db.js'
 import authRoutes from './routes/authRoutes.js'
 import protectedToken from './middleware/authMiddleware.js';
+import transactionRoutes from './routes/transactionRoutes.js';
 
 dotenv.config(); 
 connectDatabase();
@@ -14,6 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 app.get("/api/protected", protect, (req, res) => {
   res.json({
