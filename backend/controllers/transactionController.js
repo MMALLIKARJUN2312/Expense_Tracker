@@ -135,3 +135,36 @@ export const getDashboardSummary = async (req, res) => {
   }
 };
 
+// Get Category Breakdown
+export const getCategoryBreakdown = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const breakdown = await Transaction.aggregate([
+      {
+        $match: { user: userId }
+      },
+      {
+        $group: {
+          _id: "$category",
+          total: { $sum: "$amount" }
+        }
+      },
+      {
+        $sort: { total: -1 }
+      }
+    ]);
+
+    const formatted = breakdown.map(item => ({
+      category: item._id,
+      total: item.total
+    }));
+
+    res.json(formatted);
+
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+
