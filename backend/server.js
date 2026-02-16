@@ -5,6 +5,7 @@ import connectDatabase from './config/db.js'
 import authRoutes from './routes/authRoutes.js'
 import protectedToken from './middleware/authMiddleware.js';
 import transactionRoutes from './routes/transactionRoutes.js';
+import errorHandler from "./middleware/errorMiddleware.js";
 
 dotenv.config(); 
 connectDatabase();
@@ -13,6 +14,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(errorHandler);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);

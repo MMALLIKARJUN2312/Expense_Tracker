@@ -1,8 +1,8 @@
 import Transaction from "../models/Transaction.js";
+import asyncHandler from "../middleware/asyncHandler.js";
 
 // Create a new transaction
-export const createTransaction = async (req, res) => {
-  try {
+export const createTransaction = asyncHandler(async (req, res) => {
     const { title, amount, category, date, notes } = req.body;
 
     const transaction = new Transaction({
@@ -15,14 +15,10 @@ export const createTransaction = async (req, res) => {
     });
 
     res.status(201).json({ transaction });
-  } catch (error) {
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+});
 
 // Get all transactions
-export const getTransactions = async (req, res) => {
-  try {
+export const getTransactions = asyncHandler(async (req, res) => {
     const {
       search,
       category,
@@ -75,16 +71,11 @@ export const getTransactions = async (req, res) => {
       totalPages: Math.ceil(total / limit),
       totalResults: total
     });
-
-  } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+});
 
 
 // Get transaction by id
-export const getTransactionById = async (req, res) => {
-  try {
+export const getTransactionById = asyncHandler(async (req, res) => {
     const transaction = await Transaction.findOne({
       _id: req.params.id,
       user: req.user._id,
@@ -94,14 +85,10 @@ export const getTransactionById = async (req, res) => {
       return res.status(404).json({ message: "Transaction not found" });
     }
     res.json({ transaction });
-  } catch (error) {
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+});
 
 // Update a transaction
-export const updateTransaction = async (req, res) => {
-  try {
+export const updateTransaction = asyncHandler(async (req, res) => {
     const transaction = await Transaction.findOne({
       _id: req.params.id,
       user: req.user._id,
@@ -119,15 +106,11 @@ export const updateTransaction = async (req, res) => {
 
     const updated = await transaction.save();
     res.json(updated);
-  } catch (error) {
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+});
 
 // Delete a transaction
-export const deleteTransaction = async (req, res) => {
-  try {
-    const transaction = await Transaction.findOne({
+export const deleteTransaction = asyncHandler(async (req, res) => {
+  const transaction = await Transaction.findOne({
       _id: req.params.id,
       user: req.user._id,
     });
@@ -138,15 +121,11 @@ export const deleteTransaction = async (req, res) => {
 
     await transaction.deleteOne();
     res.json({ message: "Transaction deleted successfully" });
-  } catch (error) {
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+});
 
 // Get Transactions Summary
-export const getDashboardSummary = async (req, res) => {
-  try {
-    const userId = req.user._id;
+export const getDashboardSummary = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
 
     const summary = await Transaction.aggregate([
       {
@@ -165,16 +144,11 @@ export const getDashboardSummary = async (req, res) => {
       totalAmount: summary[0]?.totalAmount || 0,
       totalTransactions: summary[0]?.totalTransactions || 0
     });
-
-  } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+});
 
 // Get Category Breakdown
-export const getCategoryBreakdown = async (req, res) => {
-  try {
-    const userId = req.user._id;
+export const getCategoryBreakdown = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
 
     const breakdown = await Transaction.aggregate([
       {
@@ -197,10 +171,6 @@ export const getCategoryBreakdown = async (req, res) => {
     }));
 
     res.json(formatted);
-
-  } catch (error) {
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+});
 
 
