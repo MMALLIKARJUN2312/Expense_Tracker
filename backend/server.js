@@ -5,6 +5,7 @@ import connectDatabase from './config/db.js'
 import authRoutes from './routes/authRoutes.js'
 import transactionRoutes from './routes/transactionRoutes.js';
 import errorHandler from "./middleware/errorMiddleware.js";
+import protectedToken from './middleware/authMiddleware.js';
 
 dotenv.config(); 
 connectDatabase();
@@ -27,7 +28,7 @@ app.use(errorHandler);
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);
 
-app.get("/api/protected", protect, (req, res) => {
+app.get("/api/protected", protectedToken, (req, res) => {
   res.json({
     message: "You are authorized",
     user: req.user
