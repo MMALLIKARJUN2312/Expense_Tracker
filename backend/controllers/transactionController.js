@@ -106,3 +106,32 @@ export const deleteTransaction = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
+// Get Transactions Summary
+export const getDashboardSummary = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const summary = await Transaction.aggregate([
+      {
+        $match: { user: userId }
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: "$amount" },
+          totalTransactions: { $sum: 1 }
+        }
+      }
+    ]);
+
+    res.json({
+      totalAmount: summary[0]?.totalAmount || 0,
+      totalTransactions: summary[0]?.totalTransactions || 0
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
