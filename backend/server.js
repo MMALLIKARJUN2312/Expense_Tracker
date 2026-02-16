@@ -19,11 +19,6 @@ app.use(
   })
 );
 app.use(express.json());
-app.use((req, res, next) => {
-  res.status(404);
-  next(new Error("Route Not Found"));
-});
-app.use(errorHandler);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', transactionRoutes);
@@ -38,6 +33,15 @@ app.get("/api/protected", protectedToken, (req, res) => {
 app.get('/', (req, res) => {
     res.send("API Running ...");
 })
+
+// 404 Error Handling
+app.use((req, res, next) => {
+  res.status(404);
+  next(new Error("Route Not Found"));
+});
+
+// Global Error Handling
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
