@@ -1,6 +1,6 @@
 import express from 'express';
-import protectedToken from '../middleware/authMiddleware';
-import { createTransaction, getTransactions, getTransactionById, updateTransaction, deleteTransaction } from '../controllers/transactionController';
+import protectedToken from '../middleware/authMiddleware.js';
+import { createTransaction, getTransactions, getTransactionById, updateTransaction, deleteTransaction } from '../controllers/transactionController.js';
 import { getDashboardSummary } from "../controllers/transactionController.js";
 import { getCategoryBreakdown } from "../controllers/transactionController.js";
 

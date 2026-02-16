@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDatabase from './config/db.js'
 import authRoutes from './routes/authRoutes.js'
-import protectedToken from './middleware/authMiddleware.js';
 import transactionRoutes from './routes/transactionRoutes.js';
 import errorHandler from "./middleware/errorMiddleware.js";
 
