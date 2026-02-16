@@ -11,7 +11,6 @@ const generateToken = (id) => {
 export const registerUser = async (req, res) => {
     try {
         const {name, email, password} = req.body;
-
         // Check if user exists
         const userExists = await User.findOne({email});
 
@@ -32,6 +31,7 @@ export const registerUser = async (req, res) => {
             token : generateToken(user._id)
         })
     } catch (error) {
+        console.error("REGISTER ERROR:", error);
         res.status(500).json({message : "Internal Server Error"});
     }
 }
@@ -54,6 +54,7 @@ export const loginUser = async (req, res) => {
             token : generateToken(user._id)
         })
     } catch (error) {
+        console.error("LOGIN ERROR:", error);
         res.status(500).json({message : "Internal Server Error"});
     }
 }
