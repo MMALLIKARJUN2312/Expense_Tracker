@@ -23,28 +23,64 @@ export const createTransaction = async (req, res) => {
 // Get all transactions
 export const getTransactions = async (req, res) => {
   try {
-    const page = Number(req.query.page) || 1;
-    const limit = 10;
-    const skip = (page - 1) * limit;
+    const {
+      search,
+      category,
+      startDate,
+      endDate,
+      minAmount,
+      maxAmount,
+      page = 1
+    } = req.query;
 
-    const transactions = await Transaction.find({ user: req.user._id })
+    const limit = 10;
+    const skip = (Number(page) - 1) * limit;
+
+    const query = { user: req.user._id };
+
+    // Text Search
+    if (search) {
+      query.title = { $regex: search, $options: "i" };
+    }
+
+    // Category Filter
+    if (category) {
+      query.category = category;
+    }
+
+    // Date Range Filter
+    if (startDate || endDate) {
+      query.date = {};
+      if (startDate) query.date.$gte = new Date(startDate);
+      if (endDate) query.date.$lte = new Date(endDate);
+    }
+
+    // Amount Range Filter
+    if (minAmount || maxAmount) {
+      query.amount = {};
+      if (minAmount) query.amount.$gte = Number(minAmount);
+      if (maxAmount) query.amount.$lte = Number(maxAmount);
+    }
+
+    const transactions = await Transaction.find(query)
       .sort({ date: -1 })
       .skip(skip)
       .limit(limit);
 
-    const totalTransactions = await Transaction.countDocuments({
-      user: req.user._id,
-    });
+    const total = await Transaction.countDocuments(query);
 
     res.json({
       transactions,
-      page,
-      totalPages: Math.ceil(totalTransactions / limit),
+      currentPage: Number(page),
+      totalPages: Math.ceil(total / limit),
+      totalResults: total
     });
+
   } catch (error) {
-    return res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
 // Get transaction by id
 export const getTransactionById = async (req, res) => {
