@@ -1,8 +1,9 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://expense-tracker-backend-j9mz.onrender.com/api"
+  baseURL: import.meta.env.VITE_API_URL
 });
+
 
 // Attach token automatically
 API.interceptors.request.use((req) => {
